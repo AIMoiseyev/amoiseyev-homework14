@@ -41,5 +41,5 @@
     - Запуск сервера на localhost:3000 с хот релоудом - `npm run dev`
 
 ## Github:
-https://github.com/AIMoiseyev/amoiseyev-homework12/tree/develop
+https://github.com/AIMoiseyev/amoiseyev-homework13/tree/develop
 
