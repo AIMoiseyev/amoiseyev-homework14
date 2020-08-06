@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { validateImage } = require('../helpers/helpers');
+const validator = require('validator');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -17,9 +17,11 @@ const userSchema = new mongoose.Schema({
   avatar: {
     required: true,
     type: String,
-    match: [
-      new RegExp(validateImage, 'g'),
-    ],
+    validate: {
+      validator(link) {
+        return validator.isURL(link);
+      },
+    },
   },
 });
 

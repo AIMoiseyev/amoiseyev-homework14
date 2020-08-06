@@ -31,8 +31,14 @@ module.exports.createUser = (req, res) => {
 
 module.exports.findUser = (req, res) => {
   User.findById(req.params.id)
-    .then((user) => res.status(200)
-      .send({ data: user }))
+    .then((user) => {
+      if (user) {
+        res.status(200)
+          .send({ data: user });
+      }
+      res.status(404)
+        .send({ message: 'Нет пользователя с таким id' });
+    })
     .catch((err) => {
       if (err.message.indexOf(' Cast to ObjectId failed')) {
         res.status(404)
