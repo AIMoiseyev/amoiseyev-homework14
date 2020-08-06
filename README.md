@@ -1,28 +1,36 @@
-# Домашняя работа № 12
+# Домашняя работа № 13
 ***
-Версия 0.0.2
+Версия 0.0.1
 
 ## Описание:
-В данном репозитории находится домашняя работа № 12 курса Яндекс.Практикум. Это Учебный проект по созданию сервера.
+В данном репозитории находится домашняя работа № 13 курса Яндекс.Практикум. Это Учебный проект по созданию сервера с использованием базы данных.
 
 ## Основной функционал: 
-- раздает статические файлы
-- API:
+- REST API:
   - по запросу `GET localhost:3000/users` 
-  возвращает JSON всех пользователей
+  возвращает всех пользователей из базы
   - по запросу `GET localhost:3000/users/id` 
-  возвращает JSON пользователя по id
-  - по запросу `GET localhost:3000/cards` 
-      возвращает JSON всех карточек
+  возвращает пользователя по _id
+  - по запросу `POST localhost:3000/users` создаёт пользователя с переданными в теле запроса name, about и avatar
+  - по запросу `GET localhost:3000/cards` возвращает все карточки из базы
+  - по запросу `POST localhost:3000/cards` создаёт карточку с переданными в теле запроса name и link. owner проставляется
+  - по запросу `DELETE localhost:3000/cards/:cardId` удаляет карточку по _id
+  - по запросу `PATCH localhost:3000/users/me` обновляет профиль
+  - по запросу `PATCH localhost:3000/users/me/avatar` обновляет аватар
+  - по запросу `PUT localhost:3000/cards/:cardId/likes` поставить лайк карточке
+  - по запросу `DELETE localhost:3000/cards/:cardId/likes` убрать лайк с карточки
+  
 
 ## Стэк технологий:
 - node.js
 - express.js
+- mongoDB
 
 ## Пакеты в сборке:
 - [nodemon](https://www.npmjs.com/package/nodemon)
 - [body-parser](https://www.npmjs.com/package/body-parser)
 - [eslint](https://www.npmjs.com/package/eslint)
+- [mongoose](https://mongoosejs.com/)
 
 
 ## Инструкция по запуску:

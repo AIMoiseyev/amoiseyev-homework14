@@ -42,3 +42,39 @@ module.exports.deleteCard = (req, res) => {
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
+
+module.exports.likeCard = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
+    .then((card) => res.send({ data: card }))
+    .catch((err) => {
+      if (err.message.indexOf(' Cast to ObjectId failed')) {
+        res.status(404)
+          .send({ message: 'Нет карточки с таким id' });
+        return;
+      }
+      res.status(500)
+        .send({ message: 'На сервере произошла ошибка' });
+    });
+};
+
+module.exports.dislikeCard = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true },
+  )
+    .then((card) => res.send({ data: card }))
+    .catch((err) => {
+      if (err.message.indexOf(' Cast to ObjectId failed')) {
+        res.status(404)
+          .send({ message: 'Нет карточки с таким id' });
+        return;
+      }
+      res.status(500)
+        .send({ message: 'На сервере произошла ошибка' });
+    });
+};
