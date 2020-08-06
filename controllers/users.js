@@ -43,3 +43,48 @@ module.exports.findUser = (req, res) => {
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
+
+module.exports.updateProfile = (req, res) => {
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(req.user._id, {
+    name,
+    about,
+  }, {
+    new: true,
+    runValidators: true,
+    upsert: false,
+  })
+    .then((user) => res.status(200)
+      .send({ data: user }))
+    .catch((err) => {
+      if (err.message.indexOf(' Validation failed')) {
+        res.status(400)
+          .send({ message: err.message });
+        return;
+      }
+      res.status(500)
+        .send({ message: 'На сервере произошла ошибка' });
+    });
+};
+
+module.exports.updateAvatar = (req, res) => {
+  const { avatar } = req.body;
+  User.findByIdAndUpdate(req.user._id, {
+    avatar,
+  }, {
+    new: true,
+    runValidators: true,
+    upsert: false,
+  })
+    .then((user) => res.status(200)
+      .send({ data: user }))
+    .catch((err) => {
+      if (err.message.indexOf(' Validation failed')) {
+        res.status(400)
+          .send({ message: err.message });
+        return;
+      }
+      res.status(500)
+        .send({ message: 'На сервере произошла ошибка' });
+    });
+};
