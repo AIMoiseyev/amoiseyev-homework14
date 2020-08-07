@@ -1,6 +1,6 @@
 {
   "name": "amoiseyev-homework13",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "educational project. Run server on node.js",
   "main": "app.js",
   "scripts": {

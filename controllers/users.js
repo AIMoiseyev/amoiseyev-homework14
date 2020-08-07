@@ -60,8 +60,14 @@ module.exports.updateProfile = (req, res) => {
     runValidators: true,
     upsert: false,
   })
-    .then((user) => res.status(200)
-      .send({ data: user }))
+    .then((user) => {
+      if (user) {
+        res.status(200)
+          .send({ data: user });
+      }
+      res.status(404)
+        .send({ message: 'Нет пользователя с таким id' });
+    })
     .catch((err) => {
       if (err.message.indexOf(' Validation failed')) {
         res.status(400)
@@ -82,8 +88,14 @@ module.exports.updateAvatar = (req, res) => {
     runValidators: true,
     upsert: false,
   })
-    .then((user) => res.status(200)
-      .send({ data: user }))
+    .then((user) => {
+      if (user) {
+        res.status(200)
+          .send({ data: user });
+      }
+      res.status(404)
+        .send({ message: 'Нет пользователя с таким id' });
+    })
     .catch((err) => {
       if (err.message.indexOf(' Validation failed')) {
         res.status(400)

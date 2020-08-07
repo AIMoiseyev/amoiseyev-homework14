@@ -2,6 +2,7 @@ const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => res.status(200)
       .send({ data: cards }))
     .catch(() => res.status(500)
@@ -55,7 +56,13 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card) {
+        res.send({ data: card });
+      }
+      res.status(404)
+        .send({ message: 'Нет пользователя с таким id' });
+    })
     .catch((err) => {
       if (err.message.indexOf(' Cast to ObjectId failed')) {
         res.status(404)
@@ -73,7 +80,13 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card) {
+        res.send({ data: card });
+      }
+      res.status(404)
+        .send({ message: 'Нет пользователя с таким id' });
+    })
     .catch((err) => {
       if (err.message.indexOf(' Cast to ObjectId failed')) {
         res.status(404)
