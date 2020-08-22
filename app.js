@@ -16,13 +16,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5f2ae2869e0f3eb5c53d53f9',
-  };
-
-  next();
-});
 
 app.use('/', cardsRouter);
 app.use('/', usersRouter);

@@ -9,11 +9,13 @@ const {
   login,
 } = require('../controllers/users');
 
-usersRouter.get('/users', getUsers);
-usersRouter.get('/users/:id', findUser);
+const auth = require('../middlewares/auth');
+
+usersRouter.get('/users', auth, getUsers);
+usersRouter.get('/users/:id', auth, findUser);
 usersRouter.post('/signup', createUser);
 usersRouter.post('/signin', login);
-usersRouter.patch('/users/me', updateProfile);
-usersRouter.patch('/users/me/avatar', updateAvatar);
+usersRouter.patch('/users/me', auth, updateProfile);
+usersRouter.patch('/users/me/avatar', auth, updateAvatar);
 
 module.exports = usersRouter;
