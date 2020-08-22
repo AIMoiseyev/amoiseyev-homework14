@@ -1,6 +1,16 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+// function validatePassword(string) {
+//   const password = /^[A-Za-z]\w{8,14}$/;
+//   console.log(string);
+//   console.log(string.match(password));
+//   if (string.match(password)) {
+//     return true;
+//   }
+//   return false;
+// }
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -37,16 +47,24 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
-    validate: {
-      validatePassword(string) {
-        const password = /^[A-Za-z]\w{7,14}$/;
-        if (string.match(password)) {
-          return true;
-        }
-        return false;
-      },
-    },
+    // validate: validatePassword,
   },
 });
+
+userSchema.statics.findUserByCredentials = function (email, password) {
+  return this.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Неправильные почта или пароль'));
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Неправильные почта или пароль'));
+          }
+          return user;
+        });
+    });
+};
 
 module.exports = mongoose.model('user', userSchema);
