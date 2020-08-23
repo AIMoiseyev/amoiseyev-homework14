@@ -1,9 +1,9 @@
-# Домашняя работа № 13
+# Домашняя работа № 14
 ***
-Версия 0.0.3
+Версия 0.0.1
 
 ## Описание:
-В данном репозитории находится домашняя работа № 13 курса Яндекс.Практикум. Это Учебный проект по созданию сервера с использованием базы данных.
+В данном репозитории находится домашняя работа № 14 курса Яндекс.Практикум. Это Учебный проект по созданию сервера с использованием базы данных.
 
 ## Основной функционал: 
 - REST API:
@@ -11,7 +11,8 @@
   возвращает всех пользователей из базы
   - по запросу `GET localhost:3000/users/id` 
   возвращает пользователя по _id
-  - по запросу `POST localhost:3000/users` создаёт пользователя с переданными в теле запроса name, about и avatar
+  - по запросу `POST localhost:3000/signup` создаёт пользователя с переданными в теле запроса name, email, password, about и avatar
+  - по запросу `POST localhost:3000/signip` решистрирует пользователя в системе
   - по запросу `GET localhost:3000/cards` возвращает все карточки из базы
   - по запросу `POST localhost:3000/cards` создаёт карточку с переданными в теле запроса name и link. owner проставляется
   - по запросу `DELETE localhost:3000/cards/:cardId` удаляет карточку по _id
@@ -31,6 +32,11 @@
 - [body-parser](https://www.npmjs.com/package/body-parser)
 - [eslint](https://www.npmjs.com/package/eslint)
 - [mongoose](https://mongoosejs.com/)
+- [Helmet](https://www.npmjs.com/package/helmet)
+- [cookie-parser](http://expressjs.com/en/resources/middleware/cookie-parser.html)
+- [express-rate-limit](https://www.npmjs.com/package/express-rate-limit)
+- [bcryptjs](https://www.npmjs.com/package/bcryptjs)
+- [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
 
 
 ## Инструкция по запуску:
@@ -41,5 +47,5 @@
     - Запуск сервера на localhost:3000 с хот релоудом - `npm run dev`
 
 ## Github:
-https://github.com/AIMoiseyev/amoiseyev-homework13/tree/develop
+https://github.com/AIMoiseyev/amoiseyev-homework14/tree/develop
 
