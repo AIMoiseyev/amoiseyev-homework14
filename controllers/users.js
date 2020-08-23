@@ -31,7 +31,6 @@ module.exports.createUser = (req, res) => {
       if (err.message.indexOf('validation failed')) {
         res.status(400)
           .send({ message: err.message });
-        return;
       }
       res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
@@ -76,57 +75,76 @@ module.exports.findUser = (req, res) => {
 
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, {
-    name,
-    about,
-  }, {
-    new: true,
-    runValidators: true,
-    upsert: false,
-  })
+  User.findById(req.user._id)
     .then((user) => {
-      if (user) {
-        res.status(200)
-          .send({ data: user });
+      if (user._id.toString() !== req.user._id.toString()) {
+        return Promise.reject(new Error('Недостаточно прав'));
       }
-      res.status(404)
-        .send({ message: 'Нет пользователя с таким id' });
+
+      return User.findByIdAndUpdate(req.user._id, {
+        name,
+        about,
+      }, {
+        new: true,
+        runValidators: true,
+        upsert: false,
+      })
+        .then((match) => {
+          if (match) {
+            return res.status(200)
+              .send({ data: match });
+          }
+          return res.status(404)
+            .send({ message: 'Нет пользователя с таким id' });
+        });
     })
     .catch((err) => {
-      if (err.message.indexOf(' Validation failed')) {
-        res.status(400)
+      if (!err.message.indexOf('Недостаточно прав')) {
+        return res.status(403)
           .send({ message: err.message });
-        return;
       }
-      res.status(500)
+      if (err.message.indexOf(' Validation failed')) {
+        return res.status(400)
+          .send({ message: err.message });
+      }
+      return res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, {
-    avatar,
-  }, {
-    new: true,
-    runValidators: true,
-    upsert: false,
-  })
+  User.findById(req.user._id)
     .then((user) => {
-      if (user) {
-        res.status(200)
-          .send({ data: user });
+      if (user._id.toString() !== req.user._id.toString()) {
+        return Promise.reject(new Error('Недостаточно прав'));
       }
-      res.status(404)
-        .send({ message: 'Нет пользователя с таким id' });
+      return User.findByIdAndUpdate(req.user._id, {
+        avatar,
+      }, {
+        new: true,
+        runValidators: true,
+        upsert: false,
+      })
+        .then((match) => {
+          if (match) {
+            return res.status(200)
+              .send({ data: match });
+          }
+          return res.status(404)
+            .send({ message: 'Нет пользователя с таким id' });
+        });
     })
     .catch((err) => {
       if (err.message.indexOf(' Validation failed')) {
-        res.status(400)
+        return res.status(400)
           .send({ message: err.message });
-        return;
       }
-      res.status(500)
+      if (!err.message.indexOf('Недостаточно прав')) {
+        return res.status(403)
+          .send({ message: err.message });
+      }
+      return res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
