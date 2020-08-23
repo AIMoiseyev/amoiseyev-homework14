@@ -29,10 +29,10 @@ module.exports.createUser = (req, res) => {
       .send({ data: user }))
     .catch((err) => {
       if (err.message.indexOf('validation failed')) {
-        res.status(400)
+        return res.status(400)
           .send({ message: err.message });
       }
-      res.status(500)
+      return res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
@@ -43,13 +43,16 @@ module.exports.login = (req, res) => {
     // добавить куки
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'mesto-secret-key', { expiresIn: '7d' });
-      res.send({ token });
+      // res.send({ token });
+      res.cookie('jwt', token, {
+        maxAge: 3600000,
+        httpOnly: true,
+      })
+        .end();
     })
-    .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
-    });
+    .catch((err) => res
+      .status(401)
+      .send({ message: err.message }));
 };
 
 module.exports.findUser = (req, res) => {
