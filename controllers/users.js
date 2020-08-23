@@ -40,13 +40,12 @@ module.exports.createUser = (req, res) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
-    // добавить куки
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'mesto-secret-key', { expiresIn: '7d' });
-      // res.send({ token });
+      const token = jwt.sign({ _id: user._id }, '6223b09f8bf2c022f1d6266f7ff0b5268892897434e5cb9e15d3a67d1bfdbe4b', { expiresIn: '7d' });
       res.cookie('jwt', token, {
         maxAge: 3600000,
         httpOnly: true,
+        sameSite: true,
       })
         .end();
     })
