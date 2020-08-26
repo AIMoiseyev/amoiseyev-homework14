@@ -26,9 +26,27 @@ module.exports.createUser = (req, res) => {
       password: hash,
     }))
     .then((user) => res.status(200)
-      .send({ data: user }))
+      .send({
+        data: {
+          _id: user._id,
+          name,
+          about,
+          avatar,
+          email,
+        },
+      }))
     .catch((err) => {
-      if (err.message.indexOf('validation failed')) {
+      if (err.name === 'Error') {
+        return res.status(409)
+          // 'Заполнены не все обязательные поля'
+          .send({ message: 'Заполнены не все обязательные поля' });
+      }
+      if (err.name === 'MongoError') {
+        return res.status(409)
+          // 'Пользователь с таким email уже существует'
+          .send({ message: 'Пользователь с таким email уже существует' });
+      }
+      if (err.name === 'ValidationError') {
         return res.status(400)
           .send({ message: err.message });
       }
@@ -65,8 +83,9 @@ module.exports.findUser = (req, res) => {
         .send({ message: 'Нет пользователя с таким id' });
     })
     .catch((err) => {
-      if (err.message.indexOf(' Cast to ObjectId failed')) {
-        res.status(404)
+      if (err.name === 'CastError') {
+        res.status(400)
+        // 'Нет пользователя с таким id'
           .send({ message: 'Нет пользователя с таким id' });
         return;
       }
@@ -80,7 +99,8 @@ module.exports.updateProfile = (req, res) => {
   User.findById(req.user._id)
     .then((user) => {
       if (user._id.toString() !== req.user._id.toString()) {
-        return Promise.reject(new Error('Недостаточно прав'));
+        return res.status(403)
+          .send({ message: 'Недостаточно прав' });
       }
 
       return User.findByIdAndUpdate(req.user._id, {
@@ -101,11 +121,7 @@ module.exports.updateProfile = (req, res) => {
         });
     })
     .catch((err) => {
-      if (!err.message.indexOf('Недостаточно прав')) {
-        return res.status(403)
-          .send({ message: err.message });
-      }
-      if (err.message.indexOf(' Validation failed')) {
+      if (err.name === 'ValidationError') {
         return res.status(400)
           .send({ message: err.message });
       }
@@ -119,7 +135,8 @@ module.exports.updateAvatar = (req, res) => {
   User.findById(req.user._id)
     .then((user) => {
       if (user._id.toString() !== req.user._id.toString()) {
-        return Promise.reject(new Error('Недостаточно прав'));
+        return res.status(403)
+          .send({ message: 'Недостаточно прав' });
       }
       return User.findByIdAndUpdate(req.user._id, {
         avatar,
@@ -138,12 +155,8 @@ module.exports.updateAvatar = (req, res) => {
         });
     })
     .catch((err) => {
-      if (err.message.indexOf(' Validation failed')) {
+      if (err.name === 'ValidationError') {
         return res.status(400)
-          .send({ message: err.message });
-      }
-      if (!err.message.indexOf('Недостаточно прав')) {
-        return res.status(403)
           .send({ message: err.message });
       }
       return res.status(500)
