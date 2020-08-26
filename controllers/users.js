@@ -38,12 +38,10 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'Error') {
         return res.status(409)
-          // 'Заполнены не все обязательные поля'
           .send({ message: 'Заполнены не все обязательные поля' });
       }
       if (err.name === 'MongoError') {
         return res.status(409)
-          // 'Пользователь с таким email уже существует'
           .send({ message: 'Пользователь с таким email уже существует' });
       }
       if (err.name === 'ValidationError') {
@@ -85,7 +83,6 @@ module.exports.findUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400)
-        // 'Нет пользователя с таким id'
           .send({ message: 'Нет пользователя с таким id' });
         return;
       }
