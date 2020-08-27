@@ -20,11 +20,10 @@ module.exports.createCard = (req, res) => {
       .send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400)
+        return res.status(400)
           .send({ message: err.message });
-        return;
       }
-      res.status(500)
+      return res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
@@ -68,11 +67,10 @@ module.exports.likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400)
+        return res.status(400)
           .send({ message: 'Нет карточки с таким id' });
-        return;
       }
-      res.status(500)
+      return res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
@@ -92,11 +90,10 @@ module.exports.dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400)
+        return res.status(400)
           .send({ message: 'Нет карточки с таким id' });
-        return;
       }
-      res.status(500)
+      return res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
     });
 };

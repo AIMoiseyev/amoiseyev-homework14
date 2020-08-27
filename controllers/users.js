@@ -37,7 +37,7 @@ module.exports.createUser = (req, res) => {
       }))
     .catch((err) => {
       if (err.name === 'Error') {
-        return res.status(409)
+        return res.status(400)
           .send({ message: 'Заполнены не все обязательные поля' });
       }
       if (err.name === 'MongoError') {
@@ -74,48 +74,39 @@ module.exports.findUser = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
       if (user) {
-        res.status(200)
+        return res.status(200)
           .send({ data: user });
       }
-      res.status(404)
+      return res.status(404)
         .send({ message: 'Нет пользователя с таким id' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400)
+        return res.status(400)
           .send({ message: 'Нет пользователя с таким id' });
-        return;
       }
-      res.status(500)
+      return res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
 
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
-  User.findById(req.user._id)
+  User.findByIdAndUpdate(req.user._id, {
+    name,
+    about,
+  }, {
+    new: true,
+    runValidators: true,
+    upsert: false,
+  })
     .then((user) => {
-      if (user._id.toString() !== req.user._id.toString()) {
-        return res.status(403)
-          .send({ message: 'Недостаточно прав' });
+      if (user) {
+        return res.status(200)
+          .send({ data: user });
       }
-
-      return User.findByIdAndUpdate(req.user._id, {
-        name,
-        about,
-      }, {
-        new: true,
-        runValidators: true,
-        upsert: false,
-      })
-        .then((match) => {
-          if (match) {
-            return res.status(200)
-              .send({ data: match });
-          }
-          return res.status(404)
-            .send({ message: 'Нет пользователя с таким id' });
-        });
+      return res.status(404)
+        .send({ message: 'Нет пользователя с таким id' });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -129,27 +120,20 @@ module.exports.updateProfile = (req, res) => {
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findById(req.user._id)
-    .then((user) => {
-      if (user._id.toString() !== req.user._id.toString()) {
-        return res.status(403)
-          .send({ message: 'Недостаточно прав' });
+  User.findByIdAndUpdate(req.user._id, {
+    avatar,
+  }, {
+    new: true,
+    runValidators: true,
+    upsert: false,
+  })
+    .then((match) => {
+      if (match) {
+        return res.status(200)
+          .send({ data: match });
       }
-      return User.findByIdAndUpdate(req.user._id, {
-        avatar,
-      }, {
-        new: true,
-        runValidators: true,
-        upsert: false,
-      })
-        .then((match) => {
-          if (match) {
-            return res.status(200)
-              .send({ data: match });
-          }
-          return res.status(404)
-            .send({ message: 'Нет пользователя с таким id' });
-        });
+      return res.status(404)
+        .send({ message: 'Нет пользователя с таким id' });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
