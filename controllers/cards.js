@@ -19,32 +19,35 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.status(200)
       .send({ data: card }))
     .catch((err) => {
-      if (err.message.indexOf('validation failed')) {
-        res.status(400)
+      if (err.name === 'ValidationError') {
+        return res.status(400)
           .send({ message: err.message });
-        return;
       }
-      res.status(500)
+      return res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
-      if (card) {
-        res.send({ data: card });
+      if (!card) {
+        return res.status(404)
+          .send({ message: 'Нет карточки с таким id' });
       }
-      res.status(404)
-        .send({ message: 'Нет пользователя с таким id' });
+      if (req.user._id.toString() !== card.owner.toString()) {
+        return res.status(403)
+          .send({ message: 'Недостаточно прав' });
+      }
+      return Card.findByIdAndRemove(req.params.cardId)
+        .then((match) => res.send({ data: match }));
     })
     .catch((err) => {
-      if (err.message.indexOf(' Cast to ObjectId failed')) {
-        res.status(404)
-          .send({ message: 'Нет пользователя с таким id' });
-        return;
+      if (err.name === 'CastError') {
+        return res.status(400)
+          .send({ message: 'Нет карточки с таким id' });
       }
-      res.status(500)
+      return res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
@@ -55,14 +58,19 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.message.indexOf(' Cast to ObjectId failed')) {
-        res.status(404)
+    .then((card) => {
+      if (!card) {
+        return res.status(404)
           .send({ message: 'Нет карточки с таким id' });
-        return;
       }
-      res.status(500)
+      return res.send({ data: card });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(400)
+          .send({ message: 'Нет карточки с таким id' });
+      }
+      return res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
@@ -73,14 +81,19 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.message.indexOf(' Cast to ObjectId failed')) {
-        res.status(404)
+    .then((card) => {
+      if (!card) {
+        return res.status(404)
           .send({ message: 'Нет карточки с таким id' });
-        return;
       }
-      res.status(500)
+      return res.send({ data: card });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(400)
+          .send({ message: 'Нет карточки с таким id' });
+      }
+      return res.status(500)
         .send({ message: 'На сервере произошла ошибка' });
     });
 };

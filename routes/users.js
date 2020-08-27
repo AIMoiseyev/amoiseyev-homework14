@@ -6,12 +6,16 @@ const {
   findUser,
   updateProfile,
   updateAvatar,
+  login,
 } = require('../controllers/users');
 
-usersRouter.get('/users', getUsers);
-usersRouter.get('/users/:id', findUser);
-usersRouter.post('/users', createUser);
-usersRouter.patch('/users/me', updateProfile);
-usersRouter.patch('/users/me/avatar', updateAvatar);
+const auth = require('../middlewares/auth');
+
+usersRouter.post('/signup', createUser);
+usersRouter.post('/signin', login);
+usersRouter.get('/users', auth, getUsers);
+usersRouter.get('/users/:id', auth, findUser);
+usersRouter.patch('/users/me', auth, updateProfile);
+usersRouter.patch('/users/me/avatar', auth, updateAvatar);
 
 module.exports = usersRouter;

@@ -1,5 +1,5 @@
 {
-  "name": "amoiseyev-homework13",
+  "name": "amoiseyev-homework14",
   "version": "0.0.2",
   "description": "educational project. Run server on node.js",
   "main": "app.js",
@@ -11,8 +11,14 @@
   "author": "Alexande Moiseyev",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "escape-html": "^1.0.3",
     "express": "^4.17.1",
+    "express-rate-limit": "^5.1.3",
+    "helmet": "^4.1.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.27",
     "validator": "^13.1.1"
   },
